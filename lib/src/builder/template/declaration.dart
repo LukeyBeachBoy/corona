@@ -13,7 +13,7 @@ class DeclarationDecoder<S extends ClassElement, T extends String>
   @override
   T convert(S input) {
     final StringBuffer buffer = new StringBuffer();
-    final List<InterfaceType> interfaces = <InterfaceType>[input.type];
+    final List<InterfaceType> interfaces = <InterfaceType>[input.thisType];
 
     buffer.writeln('@immutable');
     buffer.write(tokens.decl.forClass);
@@ -26,7 +26,7 @@ class DeclarationDecoder<S extends ClassElement, T extends String>
       buffer.write(tokens.typeClose);
     }
 
-    if (!input.supertype.isObject || input.mixins.isNotEmpty) {
+    if (!input.supertype.isDartCoreObject || input.mixins.isNotEmpty) {
       if (input.supertype.element.isAbstract) {
         interfaces.add(input.supertype);
 
@@ -348,7 +348,7 @@ class DeclarationDecoder<S extends ClassElement, T extends String>
 
     buffer.write(tokens.argsOpen);
     buffer.write(
-        '${input.type.displayName} source, String property, dynamic value');
+        '${input.thisType.displayName} source, String property, dynamic value');
     buffer.write(tokens.argsClose);
     buffer.write(tokens.fatArrow);
 
@@ -805,12 +805,12 @@ class DeclarationDecoder<S extends ClassElement, T extends String>
     return new _CodecData('write${type.name}');
   }
 
-  bool _hasGenericTypes(S input) => input.type.typeParameters.isNotEmpty;
+  bool _hasGenericTypes(S input) => input.thisType.element.typeParameters.isNotEmpty;
 
   Iterable<_GenericTypeDecl> _getGenericTypeDecl(S input) {
     final List<_GenericTypeDecl> list = <_GenericTypeDecl>[];
 
-    input.type.typeParameters.forEach((TypeParameterElement t) {
+    input.thisType.element.typeParameters.forEach((TypeParameterElement t) {
       list.add(new _GenericTypeDecl(t.displayName, t.bound.displayName));
     });
 

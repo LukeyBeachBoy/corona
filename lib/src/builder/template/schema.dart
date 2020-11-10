@@ -15,7 +15,7 @@ class SchemaDecoder<S extends ClassElement, T extends String> extends Converter<
     final Set<PropertyAccessorElement> accessors = new Set<PropertyAccessorElement>.from(input.accessors);
 
     input.allSupertypes.forEach((InterfaceType type) {
-      if (!type.isObject) accessors.addAll(type.accessors);
+      if (!type.isDartCoreObject) accessors.addAll(type.accessors);
     });
 
     input.interfaces.forEach((InterfaceType type) {
@@ -133,12 +133,12 @@ class SchemaDecoder<S extends ClassElement, T extends String> extends Converter<
     return buffer.toString();
   }
 
-  bool _hasGenericTypes(S input) => input.type.typeParameters.isNotEmpty;
+  bool _hasGenericTypes(S input) => input.thisType.element.typeParameters.isNotEmpty;
 
   Iterable<_GenericTypeDecl> _getGenericTypeDecl(S input) {
     final List<_GenericTypeDecl> list = <_GenericTypeDecl>[];
 
-    input.type.typeParameters.forEach((TypeParameterElement t) {
+    input.thisType.element.typeParameters.forEach((TypeParameterElement t) {
       list.add(new _GenericTypeDecl(t.displayName, t.bound.displayName));
     });
 
